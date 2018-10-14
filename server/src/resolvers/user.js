@@ -15,8 +15,11 @@ const createToken = async (user, secret) => {
 
 export default {
   Query: {
-    users: async (parent, args, { models }) =>
-      await models.User.findAll(),
+    users: combineResolvers(
+      isAdmin,
+      async (parent, args, { models }) =>
+      await models.User.findAll()
+    ),
 
     user: async (parent, { id }, { models }) =>
       await models.User.findById(id),

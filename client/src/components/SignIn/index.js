@@ -36,19 +36,17 @@ class SignInForm extends Component {
     this.setState({ [name]: value });
   };
 
-  onSubmit = (event, signIn) => {
-    signIn().then(async ({ data }) => {
-      this.setState({ ...INITIAL_STATE });
-
-      localStorage.setItem('token', data.signIn.token);
-      // console.log('data: ',data)
-      // console.log('props: ', this.props)
-      await this.props.refetch();
-
-      this.props.history.push(routes.LANDING);
-    });
-
+  onSubmit =  async (event, signIn) => {
     event.preventDefault();
+    try {
+      const { data } = await signIn()
+      localStorage.setItem('token', data.signIn.token);
+      this.setState({ ...INITIAL_STATE}); 
+      await this.props.refetch();
+      this.props.history.push(routes.LANDING);
+    } catch (error) {
+      console.log('error: ' ,error);
+    }
   };
 
   render() {
