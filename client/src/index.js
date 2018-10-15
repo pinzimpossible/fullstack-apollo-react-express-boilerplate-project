@@ -70,7 +70,7 @@ const link = ApolloLink.from([authLink, errorLink, terminatingLink]);
 
 const cache = new InMemoryCache();
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   link,
   cache,
 });
