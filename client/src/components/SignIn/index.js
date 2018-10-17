@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import withSession from '../Session/withSession'
 import { SignUpLink } from '../SignUp';
 import * as routes from '../../constants/routes';
 import ErrorMessage from '../Error';
+import Loading from '../Loading'
 
 const SIGN_IN = gql`
   mutation($login: String!, $password: String!) {
@@ -15,13 +17,21 @@ const SIGN_IN = gql`
   }
 `;
 
-const SignInPage = ({ history, refetch }) => (
-  <div>
-    <h1>SignIn</h1>
-    <SignInForm history={history} refetch={refetch} />
-    <SignUpLink />
-  </div>
-);
+const SignInPage = ({ session, loading, history, refetch }) => {
+  if(loading){
+    return(<Loading />)
+  }
+  if(session.me){
+    return(<Redirect to={routes.ACCOUNT} />)
+  }
+  return(
+    <div>
+      <h1>SignIn</h1>
+      <SignInForm history={history} refetch={refetch} />
+      <SignUpLink />
+    </div>
+  );
+}
 
 const INITIAL_STATE = {
   login: '',
@@ -84,6 +94,6 @@ class SignInForm extends Component {
   }
 }
 
-export default withRouter(SignInPage);
+export default withRouter(withSession(SignInPage));
 
 export { SignInForm };
