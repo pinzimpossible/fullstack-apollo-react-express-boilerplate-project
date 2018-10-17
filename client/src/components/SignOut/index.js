@@ -14,9 +14,9 @@ const SignOutButton = () => (
   </ApolloConsumer>
 );
 
-const signOut = async client => {
+const signOut = client => {
   localStorage.setItem('token', '');
-  await client.resetStore();
+  client.resetStore();
   history.push(routes.SIGN_IN);
 };
 

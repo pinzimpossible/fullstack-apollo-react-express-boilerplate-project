@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, BrowserRouter, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
@@ -12,8 +12,8 @@ import withSession from '../Session/withSession';
 import * as routes from '../../constants/routes';
 import history from '../../constants/history';
 
-const App = ({ session, refetch }) => (
-  <BrowserRouter>
+const App = ({ session, loading, refetch }) => (
+  <Router history={history} >
     <div>
       <Navigation session={session} />
 
@@ -30,7 +30,7 @@ const App = ({ session, refetch }) => (
         />
         <Route
           path={routes.SIGN_IN}
-          component={() => <SignInPage refetch={refetch} />}
+          component={() => <SignInPage session={session} loading={loading} refetch={refetch} />}
         />
         <Route
           path={routes.ACCOUNT}
@@ -42,7 +42,7 @@ const App = ({ session, refetch }) => (
         />
       </Switch>
     </div>
-  </BrowserRouter>
+  </Router>
 );
 
 export default withSession(App);

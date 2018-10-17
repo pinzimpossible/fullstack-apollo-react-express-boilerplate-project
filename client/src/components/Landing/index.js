@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Query } from 'react-apollo'
+// import { Query } from 'react-apollo'
 import { GET_ALL_USERS } from '../Session/queries'
 import withSession from '../Session/withSession';
 import { MessageCreate, Messages } from '../Message';
+import Loading from '../Loading'
 import { client } from '../../'
 
 const Landing = () => {
-  // console.log('session: ',session)
   return(
     <div>
       <Page />
@@ -45,7 +45,6 @@ const _Page = ({session}) => (
       <Messages me={session.me} limit={2} />
   </div>
 )
-
 const Page = withSession(_Page)
 
 class AllUsers extends Component{
@@ -55,24 +54,32 @@ class AllUsers extends Component{
     users: []
   }
 
-  componentDidMount = async () => {
-    let result
-    try {
-      const { data: { users }} = await client.query({query: GET_ALL_USERS})
-      this.setState({ users} )
-    } catch (error) {
-      const { graphQLErrors: errors } = error
-      const msg = errors.map( item => item.message).join(', ')
-      console.log('msg: ' ,msg);
-    }
+  componentDidMount = () => {
+    this.setState({ loadingUsers: true}, async () => {
+      let { users } = this.state 
+      try {
+        const result = await client.query({query: GET_ALL_USERS})
+        users = result.data.users
+      } catch (error) {
+        const { graphQLErrors: errors } = error
+        const msg = errors.map( item => item.message).join(', ')
+        console.log('msg: ' ,msg);
+      }
+      this.setState({ 
+        users,
+        loadingUsers: false
+      })
+    });
+    
+
   }
 
   render() {
-    const { users } = this.state
+    const { users, loadingUsers } = this.state
   
     return (
       <div>
-        <h3>USERS</h3>
+        {loadingUsers && <Loading />} 
         <div>{users && users.map(user => 
           <ul key={user.id} >
             <li>UserId: {user.id}</li>
