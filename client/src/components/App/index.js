@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
@@ -12,35 +12,38 @@ import withSession from '../Session/withSession';
 import * as routes from '../../constants/routes';
 import history from '../../constants/history';
 
-const App = ({ session, loading, refetch }) => (
-  <Router history={history} >
+const App = ({ session, refetch }) => (
+  <Router history={history}>
     <div>
       <Navigation session={session} />
 
       <hr />
-      <Switch>
-        <Route
-          exact
-          path={routes.LANDING}
-          component={LandingPage}
-        />
-        <Route
-          path={routes.SIGN_UP}
-          component={() => <SignUpPage refetch={refetch} />}
-        />
-        <Route
-          path={routes.SIGN_IN}
-          component={() => <SignInPage session={session} loading={loading} refetch={refetch} />}
-        />
-        <Route
-          path={routes.ACCOUNT}
-          component={AccountPage}
-        />
-        <Route
-          path={routes.ADMIN}
-          component={AdminPage}
-        />
-      </Switch>
+
+      <Route
+        exact
+        path={routes.LANDING}
+        component={LandingPage}
+      />
+      <Route
+        exact
+        path={routes.SIGN_UP}
+        component={() => <SignUpPage refetch={refetch} />}
+      />
+      <Route
+        exact
+        path={routes.SIGN_IN}
+        component={() => <SignInPage refetch={refetch} />}
+      />
+      <Route
+        exact
+        path={routes.ACCOUNT}
+        component={AccountPage}
+      />
+      <Route
+        exact
+        path={routes.ADMIN}
+        component={AdminPage}
+      />
     </div>
   </Router>
 );

@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { GET_ALL_USERS } from '../Session/queries'
 import withSession from '../Session/withSession';
 import { MessageCreate, Messages } from '../Message';
-import Loading from '../Loading'
 import { client } from '../../'
+import Loading from '../Loading';
 
 const Landing = () => {
   return(
@@ -62,7 +62,7 @@ class AllUsers extends Component{
         users = result.data.users
       } catch (error) {
         const { graphQLErrors: errors } = error
-        const msg = errors.map( item => item.message).join(', ')
+        const msg = errors && errors.map( item => item.message).join(', ')
         console.log('msg: ' ,msg);
       }
       this.setState({ 
