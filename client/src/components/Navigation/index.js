@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import * as routes from '../../constants/routes';
 import SignOutButton from '../SignOut';
+import Loading from '../Loading'
 
 const Navigation = ({ session }) => (
   <div>
@@ -11,6 +12,7 @@ const Navigation = ({ session }) => (
     ) : (
       <NavigationNonAuth />
     )}
+    <APIStatus />
   </div>
 );
 
@@ -45,5 +47,40 @@ const NavigationNonAuth = () => (
     </li>
   </ul>
 );
+
+class APIStatus extends React.Component{
+
+  state = {
+    loading: false,
+    status: ''
+  }
+
+  componentDidMount = () => {
+    // console.log('route: ' ,routes.API_STATUS)
+    this.setState({ loading: true}, () => {
+      fetch(routes.API_STATUS)
+      .then( res => res.json())
+      .then( data => {
+        this.setState({
+          loading: false,
+          status: data.status
+        })
+      })
+      .catch(err => console.log('err: ',err))
+    })
+  }
+
+  render() {
+    if(this.state.loading){
+      return(<Loading />)
+    }
+
+    return (
+      <div>
+        API Status: {this.state.status}
+      </div>
+    )
+  }
+}
 
 export default Navigation;

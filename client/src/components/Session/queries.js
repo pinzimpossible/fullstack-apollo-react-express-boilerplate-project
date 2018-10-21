@@ -10,3 +10,18 @@ export const GET_ME = gql`
     }
   }
 `;
+
+export const GET_ALL_USERS = gql`
+  {
+    users{
+      id,
+      username,
+      email,
+      role,
+      messages{
+        text,
+        createdAt
+      }
+    }
+  }
+`
