@@ -74,6 +74,16 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
+app.get('/api/status', (req, res) => {
+  res.send({ status: 'ok' });
+});
+
+app.get('/auth', async (req, res) => {
+  const me = await getMe(req)
+  // console.log('me: ',me)
+  res.send({ status: 'ok', me})
+})
+
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
@@ -89,6 +99,8 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
+
+  
 });
 
 const createUsersWithMessages = async date => {
