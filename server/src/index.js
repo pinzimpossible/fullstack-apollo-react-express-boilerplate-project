@@ -14,7 +14,11 @@ import loaders from './loaders';
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
 
 const getMe = async req => {
   const token = req.headers['x-token'];
@@ -74,6 +78,20 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
+app.get('/', (req, res) => {
+  res.send({status: 200})
+})
+
+app.get('/api/status', (req, res) => {
+  res.send({ status: 'ok' });
+});
+
+app.get('/auth', async (req, res) => {
+  const me = await getMe(req)
+  // console.log('me: ',me)
+  res.send({ status: 'ok', me})
+})
+
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
@@ -89,6 +107,8 @@ sequelize.sync({ force: isTest || isProduction }).then(async () => {
   httpServer.listen({ port }, () => {
     console.log(`Apollo Server on http://localhost:${port}/graphql`);
   });
+
+  
 });
 
 const createUsersWithMessages = async date => {
