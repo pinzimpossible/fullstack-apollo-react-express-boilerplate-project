@@ -61,9 +61,9 @@ class AllUsers extends Component{
         const result = await client.query({query: GET_ALL_USERS})
         users = result.data.users
       } catch (error) {
-        const { graphQLErrors: errors } = error
-        const msg = errors && errors.map( item => item.message).join(', ')
-        console.log('msg: ' ,msg);
+        // const { graphQLErrors: errors } = error
+        // const msg = errors && errors.map( item => item.message).join(', ')
+        // console.log('msg: ' ,msg);
       }
       this.setState({ 
         users,

@@ -12,10 +12,10 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import App from './components/App';
 import { signOut } from './components/SignOut';
 import registerServiceWorker from './registerServiceWorker';
-import { port, host } from './constants/routes'
+import { port } from './constants/routes'
 
 const httpLink = new HttpLink({
-  uri: `${host}/graphql`
+  uri: `/graphql`
 });
 
 const wsLink = new WebSocketLink({
