@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs'
+
 const Schema = mongoose.Schema;
 
 let UserSchema = new Schema({
@@ -13,14 +15,35 @@ let UserSchema = new Schema({
     type: String,
     required: true
   },
-  tolr: {
+  role: {
     type: String
   },
 });
 
-UserSchema.pre('save', async (next) => {
-  console.log('insert');
-  next()
+UserSchema.pre('save', async function(next){
+  this.password = await this.generatePasswordHash()
+  return next()
 })
+
+// method
+UserSchema.methods.generatePasswordHash = async function(){
+  const saltRounds = 10;
+  return await bcrypt.hash(this.password, saltRounds);
+}
+
+UserSchema.methods.validatePassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
+}
+
+// statics
+
+UserSchema.statics.findByLogin = async function(username){
+  let user = await this.findOne({username})
+  if (!user) {
+    user = await User.findOne({email: username})
+  }
+
+  return user;
+};
 
 export default mongoose.model('user', UserSchema);

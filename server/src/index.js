@@ -27,7 +27,8 @@ const getMe = async req => {
 
   if (token && token !== 'null') {
     try {
-      return await jwt.verify(token, process.env.TOKEN_SECRET);
+      let result = await jwt.verify(token, process.env.TOKEN_SECRET);
+      return result
     } catch (e) {
       throw new AuthenticationError(
         'Your session expired. Sign in again.',
@@ -102,7 +103,7 @@ app.get('/api/status', (req, res) => {
 app.get('/auth', async (req, res) => {
   const me = await getMe(req)
   if(!me){
-    res.send({status: 403, message: 'Permission denied'})
+    return res.send({status: 403, message: 'Permission denied'})
   }
   res.send({ status: 'ok', me})
 })

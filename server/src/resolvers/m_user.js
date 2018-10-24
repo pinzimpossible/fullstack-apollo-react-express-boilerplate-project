@@ -2,8 +2,6 @@ import jwt from 'jsonwebtoken';
 import { combineResolvers } from 'graphql-resolvers';
 import { AuthenticationError, UserInputError } from 'apollo-server';
 
-import User from '../models/m_user';
-
 const tokenExpired = 60 * 60 * 8 // 8 hours
 
 const createToken = async (user, secret) => {
@@ -15,13 +13,37 @@ const createToken = async (user, secret) => {
 
 export default {
   Query: {
-    allUser: async () => {
-      return await User.find();
+    users: async (parent, args, { models }) => {
+      return await models.User.find();
     }
   },
   Mutation: {
-    signUp: async (root, { username, email, password }) => {
-      const user = await User.save()
-    }
+    signUp: async (
+      parent,
+      { username, email, password },
+      { models, secret },
+    ) => {
+      const user = await models.User.create({username, email, password})
+    },
+    signIn: async (
+      parent,
+      { username, password },
+      { models, secret },
+    ) => {
+      const user = await models.User.findByLogin(username);
+
+      if (!user) {
+        throw new UserInputError(
+          'No user found with this login credentials.',
+        );
+      }
+
+      const isValid = await user.validatePassword(password);
+      if (!isValid) {
+        throw new AuthenticationError('Invalid password.');
+      }
+
+      return { token: createToken(user, secret) };
+    },
   }
 }
