@@ -80,6 +80,17 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, path: '/graphql' });
 
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+const isTest = !!process.env.TEST_DATABASE;
+const isProduction = !!process.env.DATABASE_URL;
+const port = process.env.PORT || 3000;
+
+httpServer.listen({ port }, () => {
+  console.log(`Apollo Server on http://localhost:${port}/graphql`);
+});
+
 app.get('/', (req, res) => {
   res.render('index')
 })
@@ -96,62 +107,51 @@ app.get('/auth', async (req, res) => {
   res.send({ status: 'ok', me})
 })
 
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
 
-const isTest = !!process.env.TEST_DATABASE;
-const isProduction = !!process.env.DATABASE_URL;
-const port = process.env.PORT || 8000;
+// sequelize.sync({ force: isTest || isProduction }).then(async () => {
+//   if (isTest || isProduction) {
+//     createUsersWithMessages(new Date());
+//   }
 
-sequelize.sync({ force: isTest || isProduction }).then(async () => {
-  if (isTest || isProduction) {
-    createUsersWithMessages(new Date());
-  }
+// });
 
-  httpServer.listen({ port }, () => {
-    console.log(`Apollo Server on http://localhost:${port}/graphql`);
-  });
+// const createUsersWithMessages = async date => {
+//   await models.User.create(
+//     {
+//       username: 'rwieruch',
+//       email: 'hello@robin.com',
+//       password: 'rwieruch',
+//       role: 'ADMIN',
+//       messages: [
+//         {
+//           text: 'Published the Road to learn React',
+//           createdAt: date.setSeconds(date.getSeconds() + 1),
+//         },
+//       ],
+//     },
+//     {
+//       include: [models.Message],
+//     },
+//   );
 
-  
-});
-
-const createUsersWithMessages = async date => {
-  await models.User.create(
-    {
-      username: 'rwieruch',
-      email: 'hello@robin.com',
-      password: 'rwieruch',
-      role: 'ADMIN',
-      messages: [
-        {
-          text: 'Published the Road to learn React',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-      ],
-    },
-    {
-      include: [models.Message],
-    },
-  );
-
-  await models.User.create(
-    {
-      username: 'ddavids',
-      email: 'hello@david.com',
-      password: 'ddavids',
-      messages: [
-        {
-          text: 'Happy to release a GraphQL in React tutorial',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-        {
-          text: 'A complete React with Apollo and GraphQL Tutorial',
-          createdAt: date.setSeconds(date.getSeconds() + 1),
-        },
-      ],
-    },
-    {
-      include: [models.Message],
-    },
-  );
-};
+//   await models.User.create(
+//     {
+//       username: 'ddavids',
+//       email: 'hello@david.com',
+//       password: 'ddavids',
+//       messages: [
+//         {
+//           text: 'Happy to release a GraphQL in React tutorial',
+//           createdAt: date.setSeconds(date.getSeconds() + 1),
+//         },
+//         {
+//           text: 'A complete React with Apollo and GraphQL Tutorial',
+//           createdAt: date.setSeconds(date.getSeconds() + 1),
+//         },
+//       ],
+//     },
+//     {
+//       include: [models.Message],
+//     },
+//   );
+// };

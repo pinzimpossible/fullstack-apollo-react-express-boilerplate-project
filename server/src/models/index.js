@@ -1,4 +1,9 @@
-import Sequelize from 'sequelize';
+import Sequelize from 'sequelize'
+import mongoose from 'mongoose'
+
+if(process.env.MONGODB_URI){
+  mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
+}
 
 let sequelize;
 if (process.env.DATABASE_URL) {
