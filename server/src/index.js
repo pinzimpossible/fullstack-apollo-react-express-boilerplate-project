@@ -19,6 +19,8 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
+app.use(express.static(__dirname + '/public'));
+app.set('view engine', 'html');
 
 const getMe = async req => {
   const token = req.headers['x-token'];
@@ -79,7 +81,7 @@ const server = new ApolloServer({
 server.applyMiddleware({ app, path: '/graphql' });
 
 app.get('/', (req, res) => {
-  res.send({status: 200})
+  res.render('index')
 })
 
 app.get('/api/status', (req, res) => {
@@ -88,7 +90,9 @@ app.get('/api/status', (req, res) => {
 
 app.get('/auth', async (req, res) => {
   const me = await getMe(req)
-  // console.log('me: ',me)
+  if(!me){
+    res.send({status: 403, message: 'Permission denied'})
+  }
   res.send({ status: 'ok', me})
 })
 
