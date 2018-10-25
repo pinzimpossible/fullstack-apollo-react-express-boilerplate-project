@@ -15,7 +15,14 @@ export default {
   Query: {
     users: async (parent, args, { models }) => {
       return await models.User.find();
-    }
+    },
+    me: async (parent, args, { models, me }) => {
+      if (!me) {
+        return null;
+      }
+
+      return await models.User.findById(me.id);
+    },
   },
   Mutation: {
     signUp: async (
@@ -24,6 +31,7 @@ export default {
       { models, secret },
     ) => {
       const user = await models.User.create({username, email, password})
+      return { token: createToken(user, secret) };
     },
     signIn: async (
       parent,

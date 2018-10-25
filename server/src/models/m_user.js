@@ -16,7 +16,9 @@ let UserSchema = new Schema({
     required: true
   },
   role: {
-    type: String
+    type: String,
+    enum: ['admin', 'operator', 'user'],
+    default: 'user'
   },
 });
 
@@ -40,7 +42,7 @@ UserSchema.methods.validatePassword = async function(password) {
 UserSchema.statics.findByLogin = async function(username){
   let user = await this.findOne({username})
   if (!user) {
-    user = await User.findOne({email: username})
+    user = await this.findOne({email: username})
   }
 
   return user;
