@@ -17,7 +17,7 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
-  origin: 'http://localhost:5000',
+  origin: `http://localhost:${port}`,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
@@ -106,6 +106,11 @@ app.get('/auth', async (req, res) => {
   res.send({ status: 'ok', me})
 })
 
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+const isTest = !!process.env.TEST_DATABASE;
+const isProduction = !!process.env.DATABASE_URL;
 
 // sequelize.sync({ force: isTest || isProduction }).then(async () => {
 //   if (isTest || isProduction) {
