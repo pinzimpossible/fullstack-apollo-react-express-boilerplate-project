@@ -32,13 +32,15 @@
 
 import mongoose from 'mongoose'
 import User from './m_user'
+import Message from './m_message'
 
 if(process.env.MONGODB_URI){
   mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
 }
 
 const models = {
-  User
+  User,
+  Message
 }
 
 export default models;

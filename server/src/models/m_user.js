@@ -20,10 +20,10 @@ let UserSchema = new Schema({
     enum: ['admin', 'operator', 'user'],
     default: 'user'
   },
-  messages: [{
+  messages: {
     type: Schema.Types.ObjectId,
     ref: 'message'
-  }]
+  }
 });
 
 // pre-hook

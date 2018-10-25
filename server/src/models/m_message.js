@@ -5,10 +5,14 @@ let MessageSchema = new Schema({
   text:{
     type: String
   },
-  author: [{
+  userId: {
     type: Schema.Types.ObjectId,
     ref: 'user'
-  }]
+  },
+  createdAt: {
+    type: Schema.Types.Date,
+    default: Date.now()
+  }
 })
 
 MessageSchema.pre('find', async (next) => {
