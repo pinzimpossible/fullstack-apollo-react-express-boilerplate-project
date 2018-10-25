@@ -18,15 +18,14 @@ export default {
           }
         : {};
 
-      // const messages = await models.Message.find({
-      //   ...cursorOptions,
-      // }, null, {
-      //   limit: limit + 1,
-      //   sort: {
-      //     createdAt: -1
-      //   }
-      // })
-      const messages = await models.Message.find()
+      const messages = await models.Message.find({
+        ...cursorOptions,
+      }, null, {
+        limit: limit + 1,
+        sort: {
+          createdAt: -1
+        }
+      })
 
       const hasNextPage = messages.length > limit;
       const edges = hasNextPage ? messages.slice(0, -1) : messages;
@@ -69,5 +68,10 @@ export default {
     //   async (parent, { id }, { models }) =>
     //     await models.Message.destroy({ where: { id } }),
     // ),
+  },
+
+  Message: {
+    user: async (message, args, { loaders }) =>
+      await loaders.user.load(message.userId)
   },
 }
