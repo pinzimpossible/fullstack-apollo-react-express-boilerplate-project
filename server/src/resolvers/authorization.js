@@ -17,9 +17,9 @@ export const isMessageOwner = async (
   { id },
   { models, me },
 ) => {
-  const message = await models.Message.findById(id, { raw: true });
-
-  if (message.userId !== me.id) {
+  const message = await models.Message.findById({_id: id});
+  
+  if (message.userId.toString() !== me.id) {
     throw new ForbiddenError('Not authenticated as owner.');
   }
 

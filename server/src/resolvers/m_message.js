@@ -2,6 +2,8 @@ import { combineResolvers } from 'graphql-resolvers';
 
 import { isAuthenticated, isMessageOwner } from './authorization';
 
+import pubsub, { EVENTS } from '../subscription';
+
 const toCursorHash = string => Buffer.from(string).toString('base64');
 
 const fromCursorHash = string =>
@@ -54,24 +56,39 @@ export default {
           userId: me.id,
         });
 
-        // pubsub.publish(EVENTS.MESSAGE.CREATED, {
-        //   messageCreated: { message },
-        // });
+        pubsub.publish(EVENTS.MESSAGE.CREATED, {
+          messageCreated: { message },
+        });
 
         return message;
       },
     ),
 
-    // deleteMessage: combineResolvers(
-    //   isAuthenticated,
-    //   isMessageOwner,
-    //   async (parent, { id }, { models }) =>
-    //     await models.Message.destroy({ where: { id } }),
-    // ),
+    deleteMessage: combineResolvers(
+      isAuthenticated,
+      isMessageOwner,
+      async (parent, { id }, { models }) =>{
+        try {
+          const { errors } = await models.Message.findByIdAndDelete(id)
+          if(errors){
+            return false
+          }
+        } catch (error) {
+          return false
+        }
+        return true
+      },
+    ),
   },
 
   Message: {
     user: async (message, args, { loaders }) =>
       await loaders.user.load(message.userId)
+  },
+
+  Subscription: {
+    messageCreated: {
+      subscribe: () => pubsub.asyncIterator(EVENTS.MESSAGE.CREATED),
+    },
   },
 }
