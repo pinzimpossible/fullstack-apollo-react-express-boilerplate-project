@@ -27,7 +27,7 @@ app.set('view engine', 'html');
 const getMe = async req => {
   const token = req.headers['x-token'];
 
-  if (token && token !== 'null') {
+  if (token) {
     try {
       let result = await jwt.verify(token, process.env.TOKEN_SECRET);
       return result
@@ -105,9 +105,6 @@ app.get('/auth', async (req, res) => {
   }
   res.send({ status: 'ok', me})
 })
-
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
 
 const isTest = !!process.env.TEST_DATABASE;
 const isProduction = !!process.env.DATABASE_URL;
