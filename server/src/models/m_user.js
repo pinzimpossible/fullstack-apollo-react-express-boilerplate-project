@@ -20,7 +20,13 @@ let UserSchema = new Schema({
     enum: ['admin', 'operator', 'user'],
     default: 'user'
   },
+  messages: [{
+    type: Schema.Types.ObjectId,
+    ref: 'message'
+  }]
 });
+
+// pre-hook
 
 UserSchema.pre('save', async function(next){
   this.password = await this.generatePasswordHash()

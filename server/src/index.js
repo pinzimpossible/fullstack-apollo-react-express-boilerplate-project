@@ -12,10 +12,12 @@ import resolvers from './resolvers';
 import models, { sequelize } from './models';
 import loaders from './loaders';
 
+const port = process.env.PORT || 5000;
+
 const app = express();
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:5000',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
@@ -83,10 +85,6 @@ server.applyMiddleware({ app, path: '/graphql' });
 
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
-
-const isTest = !!process.env.TEST_DATABASE;
-const isProduction = !!process.env.DATABASE_URL;
-const port = process.env.PORT || 3000;
 
 httpServer.listen({ port }, () => {
   console.log(`Apollo Server on http://localhost:${port}/graphql`);
