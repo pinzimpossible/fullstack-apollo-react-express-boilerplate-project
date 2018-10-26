@@ -7,10 +7,9 @@ RUN mkdir -p /app/client
 
 WORKDIR /app/client
 
-COPY ["./package.json", "./yarn.lock", "./"]
-RUN npm install -g --silent yarn
-RUN yarn install
+COPY ["./package.json", "./package-lock.json", "./"]
+RUN npm install --silent
 
 COPY [".", "./"]
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]

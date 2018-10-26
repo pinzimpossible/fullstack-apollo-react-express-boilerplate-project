@@ -7,10 +7,10 @@ RUN mkdir -p /app/server
 
 WORKDIR /app/server
 
-COPY ["./package.json", "./yarn.lock", "./.babelrc", "./"]
-RUN npm install -g --silent yarn
-RUN yarn install
+COPY ["./package.json", "./package-lock.json", "./.babelrc", "./"]
+RUN npm install --silent
+RUN npm install -g nodemon
 
 COPY ["./src", "./"]
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start"]
