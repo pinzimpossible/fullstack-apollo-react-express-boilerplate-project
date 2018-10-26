@@ -7,7 +7,7 @@ RUN mkdir -p /app/server
 
 WORKDIR /app/server
 
-COPY ["./package.json", "./package-lock.json", "./.babelrc", "./"]
+COPY ["./package.json", "./.babelrc", "./"]
 RUN npm install --silent
 RUN npm install -g nodemon
 

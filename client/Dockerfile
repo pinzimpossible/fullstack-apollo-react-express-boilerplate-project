@@ -7,7 +7,7 @@ RUN mkdir -p /app/client
 
 WORKDIR /app/client
 
-COPY ["./package.json", "./package-lock.json", "./"]
+COPY ["./package.json", "./"]
 RUN npm install --silent
 
 COPY [".", "./"]

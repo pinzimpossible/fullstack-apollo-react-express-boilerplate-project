@@ -12,6 +12,7 @@ import schema from './schema';
 import resolvers from './resolvers';
 import models, { sequelize } from './models';
 import loaders from './loaders';
+import * as errorCustom from './errorResponse' ;
 
 const port = process.env.SERVER_PORT || 5000;
 
@@ -21,13 +22,17 @@ const corsOptions = {
   origin: `http://localhost:${port}`,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'html');
 
+const getErrorCode = errorName => {
+  return errorCustom.er
+}
+
 const getMe = async req => {
   const token = req.headers['x-token'];
-
+  
   if (token) {
     try {
       let result = await jwt.verify(token, process.env.TOKEN_SECRET);

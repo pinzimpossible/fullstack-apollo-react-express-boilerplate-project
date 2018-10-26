@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { combineResolvers } from 'graphql-resolvers';
 import { AuthenticationError, UserInputError } from 'apollo-server';
+import { isAuthenticated, isAdmin } from './authorization';
 
 const tokenExpired = 60 * 60 * 8 // 8 hours
 
@@ -13,9 +14,11 @@ const createToken = async (user, secret) => {
 
 export default {
   Query: {
-    users: async (parent, args, { models }) => {
+    users: combineResolvers(
+      isAdmin,
+      async (parent, args, { models }) => {
       return await models.User.find();
-    },
+    }),
     me: async (parent, args, { models, me }) => {
       if (!me) {
         return null;

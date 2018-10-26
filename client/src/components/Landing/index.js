@@ -42,7 +42,7 @@ const _Page = ({session}) => (
   <div>
     <h2>Landing Page</h2>
       {session && session.me && <MessageCreate />}
-      <Messages me={session.me} limit={2} />
+      {session && session.me && <Messages me={session.me} limit={2} />}
   </div>
 )
 const Page = withSession(_Page)
