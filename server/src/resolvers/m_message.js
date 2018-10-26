@@ -36,9 +36,9 @@ export default {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: toCursorHash(
-            edges[edges.length - 1].createdAt.toString(),
-          ),
+          endCursor: edges[edges.length - 1] ? toCursorHash(
+            edges[edges.length - 1].createdAt.toString()
+          ) : '',
         },
       };
     },
