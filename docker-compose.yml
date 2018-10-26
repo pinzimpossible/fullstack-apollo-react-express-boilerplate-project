@@ -1,0 +1,53 @@
+version: "3"
+services:
+  #######################################################
+  #               Server dev begin
+  #######################################################
+  server:
+    build: 
+      context: ./server
+    expose: 
+      - ${SERVER_PORT}
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      NODE_ENV: ${NODE_ENV}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+    ports: 
+      - ${SERVER_PORT}:${SERVER_PORT}
+    volumes: 
+      - ./server/src:/app/server
+    links: 
+      - mongodb
+    depends_on: 
+      - mongodb
+    command: yarn start
+
+  mongodb: 
+    image: mongo:3.6.8-stretch
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
+  #######################################################
+  #               Client dev begin
+  #######################################################
+  client:
+    build:
+      context: ./client
+    environment: 
+      - REACT_APP_PORT=${REACT_APP_PORT}
+    expose: 
+      - ${REACT_APP_PORT}
+    ports:
+      - ${REACT_APP_PORT}:${REACT_APP_PORT}
+    volumes: 
+      - ./client/src:/app/client/src
+      - ./client/public:/app/client/public
+    links: 
+      - server
+    command: yarn start

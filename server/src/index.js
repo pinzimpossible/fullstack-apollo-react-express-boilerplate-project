@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import http from 'http';
+import path from 'path'
 import cors from 'cors';
 import express from 'express';
 import jwt from 'jsonwebtoken';
@@ -21,7 +22,7 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'html');
 
 const getMe = async req => {
