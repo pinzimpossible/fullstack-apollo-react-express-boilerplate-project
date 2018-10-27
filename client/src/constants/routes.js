@@ -1,4 +1,4 @@
-export const port = 8000
+export const port = 5000
 
 export const host = `http://localhost:${port}`
 // GraphQL
@@ -9,4 +9,4 @@ export const ACCOUNT = '/account';
 export const ADMIN = '/admin';
 
 // REST
-export const API_STATUS = `${host}/api/status`
+export const API_STATUS = `/api/status`

@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "nodemonConfig": {
+    "ignore": [
+      "public/**"
+    ]
+  },
   "scripts": {
     "start": "nodemon --exec babel-node src/index.js",
     "test-server": "TEST_DATABASE=mytestdatabase npm start",
@@ -22,6 +27,7 @@
     "graphql": "^14.0.0-rc.2",
     "graphql-resolvers": "^0.2.2",
     "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.6",
     "pg": "^7.4.3",
     "sequelize": "^4.38.0"
   },

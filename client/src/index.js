@@ -12,10 +12,10 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import App from './components/App';
 import { signOut } from './components/SignOut';
 import registerServiceWorker from './registerServiceWorker';
-import { port, host } from './constants/routes'
+import { port } from './constants/routes'
 
 const httpLink = new HttpLink({
-  uri: `${host}/graphql`
+  uri: `/graphql`
 });
 
 const wsLink = new WebSocketLink({
@@ -37,21 +37,23 @@ const terminatingLink = split(
 );
 
 const authLink = new ApolloLink((operation, forward) => {
-  operation.setContext(({ headers = {} }) => ({
-    headers: {
-      ...headers,
-      'x-token': localStorage.getItem('token'),
-    },
-  }));
+  operation.setContext(({ headers = {}, localToken = localStorage.getItem('token') }) => {
+    if (localToken) {
+      headers['x-token'] = localToken;
+    }
+    return {
+      headers
+    }
+  });
   
   return forward(operation);
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) => {
-      console.log('GraphQL error: ', message);
-
+    graphQLErrors.forEach(({ message, statusCode, locations, path }) => {
+      console.log('statusCode: ', message);
+      // console.log('statusCode: ', statusCode);
       if (message === 'NOT_AUTHENTICATED') {
         signOut(client);
       }
@@ -60,7 +62,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
   if (networkError) {
     console.log('Network error: ', networkError);
-
+    
     if (networkError.statusCode === 401) {
       signOut(client);
     }
