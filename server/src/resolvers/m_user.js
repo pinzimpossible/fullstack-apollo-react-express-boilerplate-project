@@ -19,6 +19,10 @@ export default {
       async (parent, args, { models }) => {
       return await models.User.find();
     }),
+
+    user: async (parent, { id }, { models }) =>
+      await models.User.findById(id),
+
     me: async (parent, args, { models, me }) => {
       if (!me) {
         return null;
@@ -27,6 +31,7 @@ export default {
       return await models.User.findById(me.id);
     },
   },
+  
   Mutation: {
     signUp: async (
       parent,
@@ -36,6 +41,7 @@ export default {
       const user = await models.User.create({username, email, password})
       return { token: createToken(user, secret) };
     },
+
     signIn: async (
       parent,
       { username, password },
@@ -56,5 +62,35 @@ export default {
 
       return { token: createToken(user, secret) };
     },
-  }
+
+    updateUser: combineResolvers(
+      isAuthenticated,
+      async (parent, { username }, { models, me }) => {
+        const user = await models.User.findById(me.id);
+        if(!user){
+          throw new UserInputError(
+            'No user found with this login credentials.',
+          );
+        }
+        return await models.User.findByIdAndUpdate(me.id, { username }, {new: true})
+      },
+    ),
+
+    deleteUser: combineResolvers(
+      isAdmin,
+      async (parent, { id }, { models }) =>
+        await models.User.destroy({
+          where: { id },
+        }),
+    ),
+  },
+
+  User: {
+    messages: async (user, args, { models }) =>
+      await models.Message.findAll({
+        where: {
+          userId: user.id,
+        },
+      }),
+  },
 }

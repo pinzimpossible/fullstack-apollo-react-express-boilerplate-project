@@ -71,13 +71,17 @@ class APIStatus extends React.Component{
   }
 
   render() {
-    if(this.state.loading){
+    const { status, loading } = this.state
+    if(loading){
       return(<Loading />)
+    }
+    const style = {
+      color: `${status === 'ok' ? 'green' : 'red'}`
     }
 
     return (
       <div>
-        API Status: {this.state.status}
+        <span style={style}>Express status: {status}</span>
       </div>
     )
   }

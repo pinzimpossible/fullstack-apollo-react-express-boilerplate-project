@@ -36,6 +36,8 @@ import Message from './m_message'
 
 if(process.env.MONGODB_URI){
   mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
+  .then(() => console.log('connecting to database successful'))
+  .catch(err => console.error('could not connect to mongo DB', err));
 }
 
 const models = {

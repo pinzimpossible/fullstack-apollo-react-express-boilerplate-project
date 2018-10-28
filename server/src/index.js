@@ -96,12 +96,15 @@ httpServer.listen({ port }, () => {
   console.log(`Apollo Server on http://localhost:${port}/graphql`);
 });
 
-app.get('/', (req, res) => {
-  res.render('index')
-})
+// app.get('/', (req, res) => {
+//   res.render('index')
+// })
 
 app.get('/api/status', (req, res) => {
-  res.send({ status: 'ok' });
+  res.send({ 
+    status: 'ok', 
+    code: 200
+  });
 });
 
 app.get('/auth', async (req, res) => {
