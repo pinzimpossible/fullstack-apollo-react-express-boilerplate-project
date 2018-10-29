@@ -49,6 +49,16 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   formatError: error => {
+    const { extensions } = error 
+    if(extensions && extensions.code === 'UNAUTHENTICATED'){
+      // console.log('UNAUTHENTICATED')
+      return {
+        ...error,
+        statusCode: 401,
+        message: error.message
+      }
+    }
+    
     const message = error.message
       .replace('SequelizeValidationError: ', '')
       .replace('Validation error: ', '');
