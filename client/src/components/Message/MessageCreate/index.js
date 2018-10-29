@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { EditorState, convertToRaw  } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -20,12 +23,13 @@ const CREATE_MESSAGE = gql`
 
 class MessageCreate extends Component {
   state = {
-    text: '',
+    editorState: EditorState.createEmpty(),
   };
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  onEditorStateChange = (editorState) => {
+    this.setState({
+      editorState,
+    });
   };
 
   onSubmit = async (event, createMessage) => {
@@ -33,17 +37,17 @@ class MessageCreate extends Component {
 
     try {
       await createMessage();
-      this.setState({ text: '' });
+      this.setState({ editorState: EditorState.createEmpty() });
     } catch (error) {}
   };
 
   render() {
-    const { text } = this.state;
+    const { editorState } = this.state;
 
     return (
       <Mutation
         mutation={CREATE_MESSAGE}
-        variables={{ text }}
+        variables={{ text: JSON.stringify(convertToRaw(editorState.getCurrentContent())) }}
         // Not used anymore because of Subscription
 
         // update={(cache, { data: { createMessage } }) => {
@@ -68,13 +72,15 @@ class MessageCreate extends Component {
           <form
             onSubmit={event => this.onSubmit(event, createMessage)}
           >
-            <textarea
-              name="text"
-              value={text}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Your message ..."
-            />
+            <h3>New message</h3>
+            <div style={{maxWidth: 800, border: '1px solid #448aff', marginBottom: 12}} >
+              <Editor
+                initialEditorState={editorState}
+                wrapperClassName="demo-wrapper"
+                editorClassName="demo-editor"
+                onEditorStateChange={this.onEditorStateChange}
+              />
+            </div>
             <button type="submit">Send</button>
 
             {error && <ErrorMessage error={error} />}

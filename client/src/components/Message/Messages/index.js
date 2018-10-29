@@ -2,7 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import MessageDelete from '../MessageDelete';
+import MessageItem from '../MessageItem'
+// import MessageDelete from '../MessageDelete';
 import Loading from '../../Loading';
 
 const MESSAGE_CREATED = gql`
@@ -162,17 +163,17 @@ class MessageList extends Component {
   }
 }
 
-const MessageItem = ({ message, me }) => (
-  <div>
-    <h3>{message.user.username}</h3>
-    <small>{message.createdAt}</small>
-    <p>{message.text}</p>
+// const MessageItem = ({ message, me }) => (
+//   <div>
+//     <h3>{message.user.username}</h3>
+//     <small>{message.createdAt}</small>
+//     <p>{message.text}</p>
 
-    {me &&
-      message.user.id === me.id && (
-        <MessageDelete message={message} />
-      )}
-  </div>
-);
+//     {me &&
+//       message.user.id === me.id && (
+//         <MessageDelete message={message} />
+//       )}
+//   </div>
+// );
 
 export default Messages;
