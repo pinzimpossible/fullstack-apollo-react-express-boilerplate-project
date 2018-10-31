@@ -13,8 +13,10 @@ import App from './components/App';
 import { signOut } from './components/SignOut';
 import registerServiceWorker from './registerServiceWorker';
 
-const port = process.env.SERVER_PORT || 5000;
-const host = process.env.NODE_ENV === 'production' ? process.env.HOST_NAME : 'localhost'
+const port = process.env.REACT_APP_SERVER_PORT || 5000;
+const host = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_HOST_NAME : 'localhost'
+
+console.log('env: ' ,process.env)
 
 const httpLink = new HttpLink({
   uri: `/graphql`
