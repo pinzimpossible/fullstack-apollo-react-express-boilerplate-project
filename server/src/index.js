@@ -15,11 +15,12 @@ import loaders from './loaders';
 import * as errorCustom from './errorResponse' ;
 
 const port = process.env.SERVER_PORT || 5000;
+const host = process.env.NODE_ENV === 'production' ? process.env.HOST_NAME : 'localhost'
 
 const app = express();
 
 const corsOptions = {
-  origin: `http://localhost:${port}`,
+  origin: `http://${host}:${port}`,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
