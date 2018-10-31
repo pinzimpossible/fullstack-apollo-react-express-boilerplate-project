@@ -30,7 +30,6 @@ app.use(history({
       {from: /^\/api\/.*$/, to: function(context){
           return context.parsedUrl.pathname;
       }},
-      {from: /\/.*/, to: '/'}
   ]
 }))
 app.use(express.static(path.join(__dirname, 'public')));
