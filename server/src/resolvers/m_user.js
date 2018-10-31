@@ -38,7 +38,21 @@ export default {
       { username, email, password },
       { models, secret },
     ) => {
-      const user = await models.User.create({username, email, password})
+      let user = await models.User.findOne({username})
+      if(user){
+        throw new UserInputError(
+          'Email or username has been taken',
+        );
+      }
+      
+      user = await models.User.findOne({email})
+      if(user){
+        throw new UserInputError(
+          'Email or username has been taken',
+        );
+      }
+
+      user = await models.User.create({username, email, password})
       return { token: createToken(user, secret) };
     },
 

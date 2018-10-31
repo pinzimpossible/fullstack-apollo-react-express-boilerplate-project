@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { SignUpLink } from '../SignUp';
+import withSession from '../Session/withSession';
 import * as routes from '../../constants/routes';
 import ErrorMessage from '../Error';
 
@@ -15,13 +16,19 @@ const SIGN_IN = gql`
   }
 `;
 
-const SignInPage = ({ history, refetch }) => (
-  <div>
-    <h1>SignIn</h1>
-    <SignInForm history={history} refetch={refetch} />
-    <SignUpLink />
-  </div>
-);
+const SignInPage = ({history, refetch, session}) => {
+  if(session && session.me){
+    return <Redirect to={routes.LANDING} />
+  }
+
+  return(
+    <div>
+      <h1>SignIn</h1>
+      <SignInForm history={history} refetch={refetch} />
+      <SignUpLink />
+    </div>
+  );
+}
 
 const INITIAL_STATE = {
   username: '',
@@ -86,6 +93,6 @@ class SignInForm extends Component {
   }
 }
 
-export default withRouter(SignInPage);
+export default withRouter(withSession(SignInPage));
 
 export { SignInForm };
