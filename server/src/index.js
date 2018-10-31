@@ -3,6 +3,7 @@ import http from 'http';
 import path from 'path'
 import cors from 'cors';
 import express from 'express';
+import history from 'connect-history-api-fallback'
 import jwt from 'jsonwebtoken';
 import DataLoader from 'dataloader';
 import { ApolloServer } from 'apollo-server-express';
@@ -24,6 +25,14 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 app.use(cors(corsOptions));
+app.use(history({
+  rewrites:[
+      {from: /^\/api\/.*$/, to: function(context){
+          return context.parsedUrl.pathname;
+      }},
+      {from: /\/.*/, to: '/'}
+  ]
+}))
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'html');
 
@@ -105,12 +114,12 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 httpServer.listen({ port }, () => {
-  console.log(`Apollo Server on http://localhost:${port}/graphql`);
+  console.log(`Apollo Server on http://${host}:${port}/graphql`);
 });
 
-// app.get('/', (req, res) => {
-//   res.render('index')
-// })
+app.get('/', (req, res) => {
+  res.render('index')
+})
 
 app.get('/api/status', (req, res) => {
   res.send({ 
@@ -119,7 +128,7 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-app.get('/auth', async (req, res) => {
+app.get('/api/auth', async (req, res) => {
   const me = await getMe(req)
   if(!me){
     return res.send({status: 403, message: 'Permission denied'})
