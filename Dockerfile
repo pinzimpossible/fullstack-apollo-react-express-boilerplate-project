@@ -11,8 +11,7 @@ COPY ["./client/package.json", "./client/yarn.lock", "./"]
 RUN npm install -g --silent yarn
 RUN yarn install
 
-COPY ["./client/public", "./public"]
-COPY ["./client/src", "./src"]
+COPY ["./client" , "./"]
 
 RUN yarn build
 
@@ -37,7 +36,7 @@ RUN npm install -g pm2
 RUN npm install -g babel-cli
 
 ## Add application code
-COPY ["./server/.env", "./server/.babelrc", "/app/server/"]
+COPY ["./server/.babelrc", "/app/server/"]
 COPY ["./server/src", "/app/server/src"]
 
 WORKDIR /app/server

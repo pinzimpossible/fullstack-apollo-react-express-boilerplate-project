@@ -7,7 +7,7 @@ services:
     image:
       eventbox-server:v1
     env_file: 
-      - ./.env
+      - .env
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     restart: always
