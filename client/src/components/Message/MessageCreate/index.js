@@ -75,7 +75,7 @@ class MessageCreate extends Component {
             <h3>New message</h3>
             <div style={{maxWidth: 800, border: '1px solid #448aff', marginBottom: 12}} >
               <Editor
-                initialEditorState={editorState}
+                editorState={editorState}
                 wrapperClassName="demo-wrapper"
                 editorClassName="demo-editor"
                 onEditorStateChange={this.onEditorStateChange}
