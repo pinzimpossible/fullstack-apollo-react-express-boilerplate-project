@@ -11,7 +11,8 @@ COPY ["./client/package.json", "./client/yarn.lock", "./"]
 RUN npm install -g --silent yarn
 RUN yarn install
 
-COPY ["./client/src", "./"]
+COPY ["./client/public", "./public"]
+COPY ["./client/src", "./src"]
 
 RUN yarn build
 
@@ -28,28 +29,19 @@ RUN mkdir -p /app/server
 WORKDIR /app/server
 
 ## Install packages using NPM 5 (bundled with the node:9 image)
-COPY ["./server/package.json",  "/app/server/package.json"]
+COPY ["./server/package.json", "./server/yarn.lock", "/app/server/"]
 RUN npm install -g --silent yarn
 RUN yarn install
 
-RUN yarn install -g pm2 
+RUN npm install -g pm2
+RUN npm install -g babel-cli
 
 ## Add application code
-COPY ["./server/.env", "./server/.babelrc", "./server/src", "/app/server/"]
+COPY ["./server/.env", "./server/.babelrc", "/app/server/"]
+COPY ["./server/src", "/app/server/src"]
 
-WORKDIR /app
+WORKDIR /app/server
 
-## Add the nodemon configuration file
-# COPY ./nodemon.json /src/nodemon.json
+COPY --from=builder /app/client/build ./src/public
 
-## Set environment to "development" by default
-# ENV NODE_ENV development
-
-## Allows port 5000 to be publicly available
-# EXPOSE 5000
-
-## The command uses nodemon to run the application
-# CMD ["npm", "start"]
-# CMD ["pm2-docker", "start", "process.json"]
-
-COPY --from=builder /app/client/build ./assets/blockpass_developer
+# CMD [ "yarn" "run" "start-prod" ]

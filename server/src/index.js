@@ -48,6 +48,7 @@ const getMe = async req => {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  playground: process.env.NODE_ENV === 'development',
   formatError: error => {
     const { extensions } = error 
     if(extensions && extensions.code === 'UNAUTHENTICATED'){
