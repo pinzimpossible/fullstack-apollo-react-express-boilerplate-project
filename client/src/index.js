@@ -12,14 +12,16 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import App from './components/App';
 import { signOut } from './components/SignOut';
 import registerServiceWorker from './registerServiceWorker';
-import { port } from './constants/routes'
+
+const port = process.env.SERVER_PORT || 5000;
+const host = process.env.NODE_ENV === 'production' ? process.env.HOST_NAME : 'localhost'
 
 const httpLink = new HttpLink({
   uri: `/graphql`
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:${port}/graphql`,
+  uri: `ws://${host}:${port}/graphql`,
   options: {
     reconnect: true,
   },
