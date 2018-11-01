@@ -11,12 +11,16 @@ let MessageSchema = new Schema({
   },
   createdAt: {
     type: Schema.Types.Date,
-    default: Date.now()
+    default: null
   }
 })
 
+MessageSchema.pre('save', function(next){
+  this.createdAt = new Date()
+  next()
+})
+
 MessageSchema.pre('find', async (next) => {
-  console.log('message findAll');
   next()
 })
 

@@ -20,6 +20,10 @@ let UserSchema = new Schema({
     enum: ['admin', 'operator', 'user'],
     default: 'user'
   },
+  createdAt: {
+    type: Schema.Types.Date,
+    default: null
+  },
   messages: {
     type: Schema.Types.ObjectId,
     ref: 'message'
@@ -30,6 +34,7 @@ let UserSchema = new Schema({
 
 UserSchema.pre('save', async function(next){
   this.password = await this.generatePasswordHash()
+  this.createdAt = new Date()
   return next()
 })
 
