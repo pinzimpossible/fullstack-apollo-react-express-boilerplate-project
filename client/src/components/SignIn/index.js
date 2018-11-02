@@ -4,7 +4,6 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { SignUpLink } from '../SignUp';
-import withSession from '../Session/withSession';
 import * as routes from '../../constants/routes';
 import ErrorMessage from '../Error';
 
@@ -93,6 +92,6 @@ class SignInForm extends Component {
   }
 }
 
-export default withRouter(withSession(SignInPage));
+export default withRouter(SignInPage);
 
 export { SignInForm };
