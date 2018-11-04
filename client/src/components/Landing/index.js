@@ -7,6 +7,8 @@ const Landing = ({ session }) => (
     <h2>Landing Page</h2>
 
     {session && session.me && <MessageCreate />}
+    <hr />
+    <hr />
     <Messages me={session.me} limit={2} />
   </div>
 );

@@ -11,7 +11,8 @@ const MESSAGE_CREATED = gql`
     messageCreated {
       message {
         id
-        text
+        title
+        description
         createdAt
         user {
           id
@@ -28,7 +29,8 @@ const GET_PAGINATED_MESSAGES_WITH_USERS = gql`
       @connection(key: "MessagesConnection") {
       edges {
         id
-        text
+        title
+        description
         createdAt
         user {
           id

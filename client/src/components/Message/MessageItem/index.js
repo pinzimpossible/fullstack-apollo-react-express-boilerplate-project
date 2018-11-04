@@ -13,16 +13,17 @@ class MessageItem extends Component{
     const { message, me } = this.props
     // console.log('message: ' ,message);
     const messageShow = message && EditorState.createWithContent(
-      convertFromRaw(JSON.parse(message.text))
+      convertFromRaw(JSON.parse(message.description))
     );
 
     return(
       <div>
         <h3>{message.user.username}</h3>
-        <small>{message.createdAt}</small>
+        <div><span>Title: <label>{message.title}</label></span></div>
         <div style={{maxWidth: 800, border: '1px solid #448aff', marginBottom: 12}} >
           <EditorWysiwyg editorState={messageShow} readOnly toolbarHidden />
         </div>
+        <div><small>Created at: {new Date(Number(message.createdAt)).toLocaleString()}</small></div>
 
         {me &&
           message.user.id === me.id && (

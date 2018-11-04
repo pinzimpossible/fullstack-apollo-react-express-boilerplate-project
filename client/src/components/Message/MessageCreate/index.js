@@ -8,10 +8,11 @@ import gql from 'graphql-tag';
 import ErrorMessage from '../../Error';
 
 const CREATE_MESSAGE = gql`
-  mutation($text: String!) {
-    createMessage(text: $text) {
+  mutation($title: String!, $description: String!) {
+    createMessage(title: $title, description: $description) {
       id
-      text
+      # title,
+      # description,
       createdAt
       user {
         id
@@ -23,6 +24,7 @@ const CREATE_MESSAGE = gql`
 
 class MessageCreate extends Component {
   state = {
+    title: '',
     editorState: EditorState.createEmpty(),
   };
 
@@ -31,6 +33,11 @@ class MessageCreate extends Component {
       editorState,
     });
   };
+
+  handleChangeInput = e => {
+    const { name, value } = e.target
+    this.setState({[name]: value});
+  }
 
   onSubmit = async (event, createMessage) => {
     event.preventDefault();
@@ -42,12 +49,13 @@ class MessageCreate extends Component {
   };
 
   render() {
-    const { editorState } = this.state;
+    const { title, editorState } = this.state;
+    const dataSubmit = { title, description: JSON.stringify(convertToRaw(editorState.getCurrentContent()))}
 
     return (
       <Mutation
         mutation={CREATE_MESSAGE}
-        variables={{ text: JSON.stringify(convertToRaw(editorState.getCurrentContent())) }}
+        variables={dataSubmit}
         // Not used anymore because of Subscription
 
         // update={(cache, { data: { createMessage } }) => {
@@ -73,6 +81,14 @@ class MessageCreate extends Component {
             onSubmit={event => this.onSubmit(event, createMessage)}
           >
             <h3>New message</h3>
+            <div style={{marginBottom: 12, minHeight: 24}}  >
+              <span><label>Title </label></span>
+              <input 
+                type='textarea' name='title' 
+                style={{height: 18, minWidth: 250}} 
+                onChange={this.handleChangeInput} 
+              />
+            </div>
             <div style={{maxWidth: 800, border: '1px solid #448aff', marginBottom: 12}} >
               <Editor
                 editorState={editorState}
