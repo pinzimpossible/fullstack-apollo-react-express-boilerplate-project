@@ -81,7 +81,7 @@ class APIStatus extends React.Component{
 
     return (
       <div>
-        <span style={style}>Express status: {status}</span>
+        <span style={style}>Express API status: {status}</span>
       </div>
     )
   }
