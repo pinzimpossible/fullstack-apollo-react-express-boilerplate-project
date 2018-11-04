@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from 'react-apollo';
@@ -11,15 +12,17 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import App from './components/App';
 import { signOut } from './components/SignOut';
-import registerServiceWorker from './registerServiceWorker';
-import { port } from './constants/routes'
+// import registerServiceWorker from './registerServiceWorker';
+
+const port = process.env.REACT_APP_SERVER_PORT || 5000;
+const host = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_HOST_NAME : 'localhost'
 
 const httpLink = new HttpLink({
   uri: `/graphql`
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://localhost:${port}/graphql`,
+  uri: `ws://${host}:${port}/graphql`,
   options: {
     reconnect: true,
   },
@@ -37,22 +40,24 @@ const terminatingLink = split(
 );
 
 const authLink = new ApolloLink((operation, forward) => {
-  operation.setContext(({ headers = {} }) => ({
-    headers: {
-      ...headers,
-      'x-token': localStorage.getItem('token'),
-    },
-  }));
+  operation.setContext(({ headers = {}, localToken = localStorage.getItem('token') }) => {
+    if (localToken) {
+      headers['x-token'] = localToken;
+    }
+    return {
+      headers
+    }
+  });
   
   return forward(operation);
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) => {
-      console.log('GraphQL error: ', message);
-
-      if (message === 'NOT_AUTHENTICATED') {
+    graphQLErrors.forEach(({ message, statusCode, locations, path }) => {
+      console.log('message: ', message);
+      // console.log('statusCode: ', statusCode);
+      if (statusCode === 401) {
         signOut(client);
       }
     });
@@ -60,7 +65,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
   if (networkError) {
     console.log('Network error: ', networkError);
-
+    
     if (networkError.statusCode === 401) {
       signOut(client);
     }
@@ -83,4 +88,4 @@ ReactDOM.render(
   document.getElementById('root'),
 );
 
-registerServiceWorker();
+// registerServiceWorker();

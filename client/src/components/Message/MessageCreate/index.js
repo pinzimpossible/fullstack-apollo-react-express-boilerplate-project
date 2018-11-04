@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
+import { EditorState, convertToRaw  } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import ErrorMessage from '../../Error';
 
 const CREATE_MESSAGE = gql`
-  mutation($text: String!) {
-    createMessage(text: $text) {
+  mutation($title: String!, $description: String!) {
+    createMessage(title: $title, description: $description) {
       id
-      text
+      # title,
+      # description,
       createdAt
       user {
         id
@@ -20,30 +24,38 @@ const CREATE_MESSAGE = gql`
 
 class MessageCreate extends Component {
   state = {
-    text: '',
+    title: '',
+    editorState: EditorState.createEmpty(),
   };
 
-  onChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
+  onEditorStateChange = (editorState) => {
+    this.setState({
+      editorState,
+    });
   };
+
+  handleChangeInput = e => {
+    const { name, value } = e.target
+    this.setState({[name]: value});
+  }
 
   onSubmit = async (event, createMessage) => {
     event.preventDefault();
 
     try {
       await createMessage();
-      this.setState({ text: '' });
+      this.setState({ editorState: EditorState.createEmpty() });
     } catch (error) {}
   };
 
   render() {
-    const { text } = this.state;
+    const { title, editorState } = this.state;
+    const dataSubmit = { title, description: JSON.stringify(convertToRaw(editorState.getCurrentContent()))}
 
     return (
       <Mutation
         mutation={CREATE_MESSAGE}
-        variables={{ text }}
+        variables={dataSubmit}
         // Not used anymore because of Subscription
 
         // update={(cache, { data: { createMessage } }) => {
@@ -68,13 +80,23 @@ class MessageCreate extends Component {
           <form
             onSubmit={event => this.onSubmit(event, createMessage)}
           >
-            <textarea
-              name="text"
-              value={text}
-              onChange={this.onChange}
-              type="text"
-              placeholder="Your message ..."
-            />
+            <h3>New message</h3>
+            <div style={{marginBottom: 12, minHeight: 24}}  >
+              <span><label>Title </label></span>
+              <input 
+                type='textarea' name='title' 
+                style={{height: 18, minWidth: 250}} 
+                onChange={this.handleChangeInput} 
+              />
+            </div>
+            <div style={{maxWidth: 800, border: '1px solid #448aff', marginBottom: 12}} >
+              <Editor
+                editorState={editorState}
+                wrapperClassName="demo-wrapper"
+                editorClassName="demo-editor"
+                onEditorStateChange={this.onEditorStateChange}
+              />
+            </div>
             <button type="submit">Send</button>
 
             {error && <ErrorMessage error={error} />}

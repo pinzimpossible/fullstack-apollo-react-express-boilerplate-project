@@ -7,7 +7,8 @@ const GET_ALL_MESSAGES_WITH_USERS = gql`
     messages(order: "DESC") @connection(key: "MessagesConnection") {
       edges {
         id
-        text
+        title
+        description
         createdAt
         user {
           id
@@ -31,7 +32,10 @@ const MessageDelete = ({ message }) => (
   <Mutation
     mutation={DELETE_MESSAGE}
     variables={{ id: message.id }}
-    update={cache => {
+    update={(cache, { data: { deleteMessage } }) => {
+      if(!deleteMessage){
+        return alert('Failed to delete')
+      }
       const data = cache.readQuery({
         query: GET_ALL_MESSAGES_WITH_USERS,
       });

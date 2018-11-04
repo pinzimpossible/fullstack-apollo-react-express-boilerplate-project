@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { combineResolvers } from 'graphql-resolvers';
 import { AuthenticationError, UserInputError } from 'apollo-server';
-
 import { isAuthenticated, isAdmin } from './authorization';
 
 const tokenExpired = 60 * 60 * 8 // 8 hours
@@ -17,9 +16,9 @@ export default {
   Query: {
     users: combineResolvers(
       isAdmin,
-      async (parent, args, { models }) =>
-      await models.User.findAll()
-    ),
+      async (parent, args, { models }) => {
+      return await models.User.find();
+    }),
 
     user: async (parent, { id }, { models }) =>
       await models.User.findById(id),
@@ -32,28 +31,37 @@ export default {
       return await models.User.findById(me.id);
     },
   },
-
+  
   Mutation: {
     signUp: async (
       parent,
       { username, email, password },
       { models, secret },
     ) => {
-      const user = await models.User.create({
-        username,
-        email,
-        password,
-      });
+      let user = await models.User.findOne({username})
+      if(user){
+        throw new UserInputError(
+          'Email or username has been taken',
+        );
+      }
+      
+      user = await models.User.findOne({email})
+      if(user){
+        throw new UserInputError(
+          'Email or username has been taken',
+        );
+      }
 
+      user = await models.User.create({username, email, password})
       return { token: createToken(user, secret) };
     },
 
     signIn: async (
       parent,
-      { login, password },
+      { username, password },
       { models, secret },
     ) => {
-      const user = await models.User.findByLogin(login);
+      const user = await models.User.findByLogin(username);
 
       if (!user) {
         throw new UserInputError(
@@ -62,7 +70,6 @@ export default {
       }
 
       const isValid = await user.validatePassword(password);
-
       if (!isValid) {
         throw new AuthenticationError('Invalid password.');
       }
@@ -74,7 +81,12 @@ export default {
       isAuthenticated,
       async (parent, { username }, { models, me }) => {
         const user = await models.User.findById(me.id);
-        return await user.update({ username });
+        if(!user){
+          throw new UserInputError(
+            'No user found with this login credentials.',
+          );
+        }
+        return await models.User.findByIdAndUpdate(me.id, { username }, {new: true})
       },
     ),
 
@@ -95,4 +107,4 @@ export default {
         },
       }),
   },
-};
+}
