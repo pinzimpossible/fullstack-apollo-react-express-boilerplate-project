@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "nodemonConfig": {
+    "ignore": [
+      "public/**"
+    ]
+  },
   "scripts": {
     "start": "nodemon --exec babel-node src/index.js",
+    "start-prod": "pm2-docker start --interpreter babel-node src/index.js",
     "test-server": "TEST_DATABASE=mytestdatabase npm start",
     "test": "mocha --require babel-core/register 'src/**/*.spec.js'"
   },
@@ -15,6 +21,7 @@
     "apollo-server": "^2.0.0-rc.7",
     "apollo-server-express": "^2.0.0-rc.7",
     "bcryptjs": "^2.4.3",
+    "connect-history-api-fallback": "^1.5.0",
     "cors": "^2.8.4",
     "dataloader": "^1.4.0",
     "dotenv": "^6.0.0",
@@ -22,8 +29,9 @@
     "graphql": "^14.0.0-rc.2",
     "graphql-resolvers": "^0.2.2",
     "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.6",
     "pg": "^7.4.3",
-    "sequelize": "^4.38.0"
+    "pm2": "^3.2.2"
   },
   "devDependencies": {
     "axios": "^0.18.0",

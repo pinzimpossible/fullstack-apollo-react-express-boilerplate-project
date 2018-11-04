@@ -1,4 +1,5 @@
 import React from 'react';
+import Page404 from './404';
 
 const ErrorMessage = ({ error }) => (
   <div>
@@ -7,3 +8,6 @@ const ErrorMessage = ({ error }) => (
 );
 
 export default ErrorMessage;
+export {
+  Page404
+}

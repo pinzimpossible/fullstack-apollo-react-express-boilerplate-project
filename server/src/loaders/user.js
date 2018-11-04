@@ -1,12 +1,11 @@
-export const batchUsers = async (keys, models) => {
-  // console.log('key: ',key);
-  const users = await models.User.findAll({
-    where: {
-      id: {
-        in: keys,
-      },
-    },
-  });
+import mongoose from 'mongoose'
 
-  return keys.map(key => users.find(user => user.id === key));
+export const batchUsers = async (keys, models) => {
+  const ids = keys.map(id => mongoose.Types.ObjectId(id))
+  const users = await models.User.find({
+    '_id': {
+      $in: ids
+    }
+  });
+  return keys.map(key => users.find(user => user.id === mongoose.Types.ObjectId(key).toString()));
 };

@@ -1,33 +1,23 @@
-import Sequelize from 'sequelize';
+import mongoose from 'mongoose'
+import User from './user'
+import Message from './message'
 
-let sequelize;
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    operatorsAliases: Sequelize.Op
-  });
-} else {
-  sequelize = new Sequelize(
-    process.env.TEST_DATABASE || process.env.DATABASE,
-    process.env.DATABASE_USER,
-    process.env.DATABASE_PASSWORD,
-    {
-      dialect: 'postgres',
-    },
-  );
+if(process.env.MONGODB_URI){
+  mongoose.connect(process.env.MONGODB_URI,{ 
+      useNewUrlParser: true,
+      // sets how many times to try reconnecting
+      reconnectTries: Number.MAX_VALUE,
+      // sets the delay between every retry (milliseconds)
+      reconnectInterval: 30000 
+    }
+  )
+  .then(() => console.log('connecting to database successful'))
+  .catch(err => console.error('could not connect to mongo DB', err));
 }
 
 const models = {
-  User: sequelize.import('./user'),
-  Message: sequelize.import('./message'),
-};
-
-Object.keys(models).forEach(key => {
-  if ('associate' in models[key]) {
-    models[key].associate(models);
-  }
-});
-
-export { sequelize };
+  User,
+  Message
+}
 
 export default models;
