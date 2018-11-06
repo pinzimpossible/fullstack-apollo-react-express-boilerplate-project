@@ -12,9 +12,8 @@ import { AuthenticationError } from 'apollo-server';
 
 import schema from './schema';
 import resolvers from './resolvers';
-import models, { sequelize } from './models';
+import models from './models';
 import loaders from './loaders';
-import * as errorCustom from './errorResponse' ;
 
 const port = process.env.SERVER_PORT || 5000;
 const host = process.env.NODE_ENV === 'production' ? process.env.HOST_NAME : 'localhost'
@@ -26,7 +25,7 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 // cors
-app.use(cors(corsOptions));
+app.use(cors());
 // api fallback for SPA
 app.use(history({
   rewrites:[
