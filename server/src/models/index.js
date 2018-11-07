@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import User from './user'
-import Message from './message'
+import Event from './event'
 
 if(process.env.MONGODB_URI){
   mongoose.connect(process.env.MONGODB_URI,{ 
@@ -22,7 +22,7 @@ else{
 
 const models = {
   User,
-  Message
+  Event
 }
 
 export default models;

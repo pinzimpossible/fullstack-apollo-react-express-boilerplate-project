@@ -71,7 +71,7 @@ const getMe = async req => {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  playground: process.env.NODE_ENV === 'development',
+  // playground: process.env.NODE_ENV === 'development',
   formatError: error => {
     const { extensions } = error 
     if(extensions && extensions.code === 'UNAUTHENTICATED'){
@@ -130,9 +130,9 @@ httpServer.listen({ port }, () => {
   console.log(`Apollo Server starts on //${host}:${port}/graphql`);
 });
 
-app.get('/', (req, res) => {
-  res.render('index')
-})
+// app.get('/', (req, res) => {
+//   res.render('index')
+// })
 
 app.get('/api/status', (req, res) => {
   res.send({ 
